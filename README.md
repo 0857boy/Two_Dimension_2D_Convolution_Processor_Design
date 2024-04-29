@@ -3,6 +3,9 @@
 ## 介紹
 此專案來自中原大學硬體描述語言Final Project，目的是設計一個2D Convolution Processor。2D Convolution Processor是一個可以對2D圖像進行卷積運算的硬體，透過卷積運算可以對圖像進行特徵提取，是影像處理中常用的技術之一。
 
+## 概念圖
+![concept](./images/concept.png)
+
 ## 硬體架構分為兩種
 1. 依照TM依序拿取Data，並進行Convolution運算
 ![arc1](./images/arc1.png)
@@ -34,5 +37,3 @@ Final Project Grading (40 %)
     3. 將你的設計進一步合成出電路做模擬或測試(FPGA Quartus/Vivado Tool或其他)。
     4. 提出你自己對設計優化的想法(找老師check)。
 
-## 概念圖
-![concept](./images/concept.png)

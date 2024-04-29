@@ -32,4 +32,7 @@ Final Project Grading (40 %)
     1. 完成一組Conv. “層”的運算(e.g., 兩個input feature maps;四個output feature maps)。
     2. 你的設計可以設定執行“3 x 3”或“5 x 5”兩種規格的kernel運算。
     3. 將你的設計進一步合成出電路做模擬或測試(FPGA Quartus/Vivado Tool或其他)。
-    4. 提出你自己對設計優化的想法(找老師check)
+    4. 提出你自己對設計優化的想法(找老師check)。
+
+## 概念圖
+![concept](./images/concept.png)

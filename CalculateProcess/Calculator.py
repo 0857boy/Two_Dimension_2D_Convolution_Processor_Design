@@ -39,7 +39,7 @@ matrix = np.array(matrix)/255.0
 
 # Print the normalized matrix 數值顯示1位整數和7位小數
 print("Normalized matrix:\n" )
-np.set_printoptions(formatter={'float': '{: 0.7f}'.format})
+np.set_printoptions(formatter={'float': '{: 0.7f}'.format}, suppress=True, linewidth=250)
 print(matrix)
 
 # Kernel
@@ -50,9 +50,22 @@ result = conv2d(matrix, kernel)
 
 # Print the result of the convolution 數值顯示6位整數和10位小數
 print("Result of the convolution:\n")
-np.set_printoptions(formatter={'float': '{: 0.10f}'.format})
+np.set_printoptions(formatter={'float': '{: 0.10f}'.format}, suppress=True)
 print(str(result))
 
-result = [tf.float_to_fixed_point_16(i) for i in result.flatten()]
-print("Fixed-point values:\n")
+print("\n---------------------------------------------------------------------------------------\n")
+
+for i in range(len(matrix)):
+    for j in range(len(matrix[0])):
+        matrix[i][j] = tf.float_to_fixed_point_8(matrix[i][j])
+
+print("Fixed-point 8-bit matrix:\n")
+print(matrix)
+
+
+for i in range(len(result)):
+    for j in range(len(result[0])):
+        result[i][j] = tf.float_to_fixed_point_16(result[i][j])
+
+print("Fixed-point 16-bit result:\n")
 print(result)

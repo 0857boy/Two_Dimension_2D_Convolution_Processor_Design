@@ -1,7 +1,7 @@
 # Two-Dimension (2D) Convolution Processor Design
 
 ## 介紹
-此專案來自中原大學硬體描述語言Final Project，目的是設計一個2D Convolution Processor。2D Convolution Processor是一個可以對2D圖像進行卷積運算的硬體，透過卷積運算可以對圖像進行特徵提取，是影像處理中常用的技術之一。
+此專案來自中原大學湯松年教授所開設的**硬體描述語言**科目的Final Project，目的是設計一個2D Convolution Processor。2D Convolution Processor是一個可以對2D圖像進行卷積運算的硬體，透過卷積運算可以對圖像進行特徵提取，是影像處理中常用的技術之一。
 
 ## 概念圖
 ![concept](./images/concept.png)

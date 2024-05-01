@@ -33,9 +33,24 @@ def conv2d(matrix, kernel):
             
     return new_matrix
 
-# Normalize the matrix
+# Print the original matrix
+print("Original matrix:\n" + str(matrix))
+
+# Normalize the matrix 
 matrix = np.array(matrix)/255.0
 
+# Print the normalized matrix 數值顯示1位整數和7位小數
+print("Normalized matrix:\n" )
+np.set_printoptions(formatter={'float': '{: 0.7f}'.format})
+print(matrix)
+
+# Kernel
+print("Kernel:\n" + str(kernel))
+
+# Convolution
 result = conv2d(matrix, kernel)
 
-print(result)
+# Print the result of the convolution 數值顯示6位整數和10位小數
+print("Result of the convolution:\n")
+np.set_printoptions(formatter={'float': '{: 0.10f}'.format})
+print(str(result))

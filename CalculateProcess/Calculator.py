@@ -52,7 +52,7 @@ print("Result of the convolution:\n")
 np.set_printoptions(formatter={'float': '{: 0.10f}'.format}, suppress=True)
 print(str(result))
 
-#根據a.的floating-point運算內容，得出其fixed-point值的運算結果(8-bit  16-bit)，
+#根據a.的floating-point運算內容，得出其fixed-point值的運算結果(8-bit -> 16-bit)，
 # 並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
 
 # Calculate the Signal-to-Quantization Noise Ratio (SQNR)
@@ -67,6 +67,7 @@ def calculate_sqnr(matrix, result):
     sqnr = 10 * np.log10(signal_power / quantization_noise)
     
     return sqnr
+print('Single to Quantization Noise Ratio (SQNR) : ')
 
 sqnr = calculate_sqnr(matrix, result)
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-# Initialize a 3x3 convolutional kernel with values from a uniform distribution between -0.1 and 0.1
-kernel = np.random.uniform(-1, 1, (3, 3))
-kernel = kernel.tolist()
-print(kernel, sep = ',')
+# use Guassian kernel
+kernel = np.array([[1, 2, 1], [2, 4, 2], [1, 2, 1]])
+
+print(kernel.tolist(), sep = ',')

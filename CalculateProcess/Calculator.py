@@ -14,8 +14,7 @@ matrix = np.matrix([ [87, 215, 60, 78, 11, 284, 182, 263], [264, 98, 145, 2, 37,
           , [106, 241, 238, 49, 19, 166, 229, 41], [271, 252, 272, 184, 46, 201, 230, 124] ])
 
 # 3x3 kernel
-kernel = np.matrix([[ 0.68700008, 0.3445509, 0.53707822], [-0.97867492, 0.4330104, 0.29976747],
-                    [-0.11658339, 0.64346389, -0.69683105]])
+kernel = np.matrix([[-0.3479130537123345, -0.4026157791375773, -0.9542468224442615], [0.8341498988338951, 0.9260927212522976, -0.9486589588649474], [0.7582421652165494, -0.34666092390501846, -0.5388521372378139]])
 
 
 # Convolution
@@ -59,10 +58,10 @@ print(str(result))
 # Calculate the Signal-to-Quantization Noise Ratio (SQNR)
 def calculate_sqnr(matrix, result):
     # Calculate the quantization noise
-    quantization_noise = ( np.sum(matrix)/len(matrix) - np.sum(result)/len(result) ) ** 2
+    quantization_noise = abs( np.sum(matrix)/len(matrix) - np.sum(result)/len(result) )
     
     # Calculate the signal power
-    signal_power = np.sum(matrix**2)
+    signal_power = np.sum(matrix)
     
     # Calculate the SQNR
     sqnr = 10 * np.log10(signal_power / quantization_noise)

@@ -4,9 +4,7 @@ b. 根據a.的floating-point運算內容，得出其fixed-point值的運算結�
             並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
 
 '''
-
-# 2D Convolution
-
+import transform as tf
 import numpy as np
 
 # 8x8 matrix
@@ -54,3 +52,7 @@ result = conv2d(matrix, kernel)
 print("Result of the convolution:\n")
 np.set_printoptions(formatter={'float': '{: 0.10f}'.format})
 print(str(result))
+
+result = [tf.float_to_fixed_point_16(i) for i in result.flatten()]
+print("Fixed-point values:\n")
+print(result)

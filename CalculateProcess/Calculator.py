@@ -8,13 +8,13 @@ import transform as tf
 import numpy as np
 
 # 8x8 matrix
-matrix = np.matrix([ [87, 215, 60, 78, 11, 284, 182, 263], [264, 98, 145, 2, 37, 92, 197, 274]
+matrix = np.array([ [87, 215, 60, 78, 11, 284, 182, 263], [264, 98, 145, 2, 37, 92, 197, 274]
           , [47, 159, 224, 259, 223, 222, 191, 288], [58, 296, 171, 282, 298, 89, 54, 249]
           , [104, 232, 290, 129, 109, 107, 90, 140], [71, 93, 126, 221, 28, 198, 61, 100]
           , [106, 241, 238, 49, 19, 166, 229, 41], [271, 252, 272, 184, 46, 201, 230, 124] ])
 
 # 3x3 kernel
-kernel = np.matrix([[-0.3479130537123345, -0.4026157791375773, -0.9542468224442615], [0.8341498988338951, 0.9260927212522976, -0.9486589588649474], [0.7582421652165494, -0.34666092390501846, -0.5388521372378139]])
+kernel = np.array([[0.0625, 0.125, 0.0625], [0.125, 0.25, 0.125], [0.0625, 0.125, 0.0625]])
 
 
 # Convolution
@@ -58,8 +58,8 @@ print(str(result))
 # Calculate the Signal-to-Quantization Noise Ratio (SQNR)
 def calculate_sqnr(matrix, result):
     # Calculate the quantization noise
-    quantization_noise = abs( np.sum(matrix)/len(matrix) - np.sum(result)/len(result) )
-    
+    quantization_noise = abs( np.sum(matrix)/64 - np.sum(result)/36 )
+
     # Calculate the signal power
     signal_power = np.sum(matrix)
     

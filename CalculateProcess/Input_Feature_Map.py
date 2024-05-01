@@ -4,4 +4,4 @@ import random
 matrix = [[random.randint(0, 100) for _ in range(8)] for _ in range(8)]
 
 # Print the matrix
-print(matrix)
+print(matrix, sep = ',')

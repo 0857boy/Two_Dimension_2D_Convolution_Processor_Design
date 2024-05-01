@@ -22,7 +22,7 @@ def float_to_fixed_point_8(val):
     if scaled_val < 0:
         binary_str = format((int(binary_str, 2) ^ 0xFF) + 1, '08b')
 
-    return binary_str
+    return str(binary_str)
 
 
 def float_to_fixed_point_16(val):
@@ -49,4 +49,4 @@ def fixed_point_to_float_16(binary_str):
     # Convert the integer to a float and scale it
     float_val = int_val / 2**10
 
-    return float_val
+    return str(float_val)

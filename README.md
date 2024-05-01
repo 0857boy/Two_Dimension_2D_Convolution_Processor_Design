@@ -20,7 +20,7 @@
 Final Project Grading (40 %)
 1.  基本work (沒有寫Verilog)(5~10分)
     1.  Study 2D Conv.運算方式，以軟體(C, Python, Excel, 手算)做出一組2D Conv. (size如第一頁的規格)之運算結果(floating-point) 。(5%)
-    2. 根據a.的floating-point運算內容，得出其fixed-point值的運算結果(8-bit  16-bit)，並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
+    2. 根據a.的floating-point運算內容，得出其fixed-point值的運算結果(8-bit -> 16-bit)，並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
 2. 基於1. ，有寫Verilog Code，但Compile不過或無法執行模擬(e.g.輸出為X) (10~15分)
 3. 基於1.， Verilog Code可以Compile與模擬(即有跑出值)，但結果不正確。(15~25分)
     1. 以”架構1/乘法器1”的方式。(15分)  

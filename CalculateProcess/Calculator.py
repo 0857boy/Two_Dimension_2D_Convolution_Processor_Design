@@ -20,3 +20,22 @@ kernel = np.matrix([[ 0.68700008, 0.3445509, 0.53707822], [-0.97867492, 0.433010
                     [-0.11658339, 0.64346389, -0.69683105]])
 
 
+# Convolution
+def conv2d(matrix, kernel):
+    m, n = kernel.shape
+    y, x = matrix.shape
+    y = y - m + 1
+    x = x - n + 1
+    new_matrix = np.zeros((y, x))
+    for i in range(y):
+        for j in range(x):
+            new_matrix[i][j] = np.sum(matrix[i:i+m, j:j+n] * kernel)
+            
+    return new_matrix
+
+# Normalize the matrix
+matrix = np.array(matrix)/255.0
+
+result = conv2d(matrix, kernel)
+
+print(result)

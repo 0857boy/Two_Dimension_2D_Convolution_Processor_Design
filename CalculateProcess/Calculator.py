@@ -52,46 +52,57 @@ print("Result of the convolution:\n")
 np.set_printoptions(formatter={'float': '{: 0.10f}'.format}, suppress=True)
 print(str(result))
 
-#根據a.的floating-point運算內容，得出其fixed-point值的運算結果(8-bit -> 16-bit)，
-# 並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
-
-# Calculate the Signal-to-Quantization Noise Ratio (SQNR)
-def calculate_sqnr(matrix, result):
-    # Calculate the quantization noise
-    quantization_noise = abs( np.sum(matrix)/64 - np.sum(result)/36 )
-
-    # Calculate the signal power
-    signal_power = np.sum(matrix)
-    
-    # Calculate the SQNR
-    sqnr = 10 * np.log10(signal_power / quantization_noise)
-    
-    return sqnr
-print('Single to Quantization Noise Ratio (SQNR) : ')
-
-sqnr = calculate_sqnr(matrix, result)
-
-print("\nSQNR: " + str(sqnr) + " dB")
-
-
 print("\n---------------------------------------------------------------------------------------\n")
 
-matrix = matrix.tolist()
+
+fixed_matrix = matrix.tolist()
 
 
 print("Fixed-point 8-bit matrix:\n")
 
-for i in range(len(matrix)):
-    for j in range(len(matrix[0])):
-        matrix[i][j] = tf.float_to_fixed_point_8(matrix[i][j])
-    print(matrix[i])
+for i in range(len(fixed_matrix)):
+    for j in range(len(fixed_matrix[0])):
+        fixed_matrix[i][j] = tf.float_to_fixed_point_8(fixed_matrix[i][j])
+        fixed_matrix[i][j] = tf.fixed_point_to_float_8(fixed_matrix[i][j])
+    print(fixed_matrix[i])
+
+fixed_matrix = np.array(fixed_matrix)
+
+fixed_kernel = kernel.tolist()
+
+print("Fixed-point 8-bit kernel:\n")
+
+for i in range(len(fixed_kernel)):
+    for j in range(len(fixed_kernel[0])):
+        fixed_kernel[i][j] = tf.float_to_fixed_point_8(fixed_kernel[i][j])
+        fixed_kernel[i][j] = tf.fixed_point_to_float_8(fixed_kernel[i][j])
+
+    print(fixed_kernel[i])
 
 
-print("Fixed-point 16-bit result:\n")
-result = result.tolist()
-for i in range(len(result)):
-    for j in range(len(result[0])):
-        result[i][j] = tf.float_to_fixed_point_16(result[i][j])
-    print(result[i])
+fixed_kernel = np.array(fixed_kernel)
 
+fixed_result = conv2d(fixed_matrix, fixed_kernel)
+
+print("Fixed-point 8-bit result of the convolution:\n")
+print(fixed_result)
+
+print("\n---------------------------------------------------------------------------------------\n")
+
+#根據a.的floating-point運算內容，得出其fixed-point值的運算結果(8-bit -> 16-bit)，
+# 並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
+# 比較result和fixed_result的差異
+
+# Calculate the SQNR
+def calculate_sqnr(result, fixed_result):
+    sum = 0
+    for i in range(len(result)):
+        for j in range(len(result[0])):
+            sum += (result[i][j] - fixed_result[i][j]) ** 2
+    mse = sum / (len(result) * len(result[0]))
+    sqnr = 10 * np.log10(np.mean(result) ** 2 / mse)
+    return sqnr
+
+sqnr = calculate_sqnr(result, fixed_result)
+print("SQNR: " + str(sqnr) + " dB")
 

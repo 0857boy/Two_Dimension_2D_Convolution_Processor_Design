@@ -104,12 +104,15 @@ print("\n-----------------------------------------------------------------------
 
 # Calculate the SQNR
 def calculate_sqnr(result, fixed_result):
-    sum = 0
+    P_x = 0
+    P_e = 0
     for i in range(len(result)):
         for j in range(len(result[0])):
-            sum += (result[i][j] - fixed_result[i][j]) ** 2
-    mse = sum / (len(result) * len(result[0]))
-    sqnr = 10 * np.log10(np.mean(result) ** 2 / mse)
+            P_x += result[i][j]**2
+            P_e += (result[i][j] - fixed_result[i][j])**2
+    P_x /= len(result) * len(result[0])
+    P_e /= len(result) * len(result[0])
+    sqnr = 10 * np.log10(P_x / P_e)
     return sqnr
 
 sqnr = calculate_sqnr(result, fixed_result)

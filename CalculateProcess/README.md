@@ -11,9 +11,11 @@
 
 ## SQNR定義
 1. SQNR是信號與量化誤差之比，是一個信號的品質指標，信號越大，量化誤差越小，SQNR越大，信號品質越好
-2. SQNR的計算公式為：SQNR = 20 * log10(信號的平方和 / 量化誤差的平方和)
+2. SQNR的計算公式為：SQNR = 20 * log10(信號的平方和 / 量化誤差的平方和)  
 
-*此次專案要求計算36個output值做平均後計算SQNR，SQNR值需 > 30 dB 公式變更為：SQNR = 20 * log10(信號(float 的output)的平方和 / 量化(float 與 fixed-point output)誤差的平方和)*
+![sqnr define](SQNR.png)
+
+*此次專案要求計算36個output值做平均後計算SQNR，SQNR值需 > 30 dB 公式變更為：SQNR = 20 * log10(信號(float 的output)的平方和平均 / 量化(float 與 fixed-point output)誤差的平方和)平均*
 
 
 ![alt text](image.png)

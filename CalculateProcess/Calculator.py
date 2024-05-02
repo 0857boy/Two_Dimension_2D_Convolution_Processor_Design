@@ -84,7 +84,16 @@ fixed_kernel = np.array(fixed_kernel)
 
 fixed_result = conv2d(fixed_matrix, fixed_kernel)
 
-print("Fixed-point 8-bit result of the convolution:\n")
+fixed_result = fixed_result.tolist()
+
+for i in range(len(fixed_result)):
+    for j in range(len(fixed_result[0])):
+        fixed_result[i][j] = tf.float_to_fixed_point_16(fixed_result[i][j])
+        fixed_result[i][j] = tf.fixed_point_to_float_16(fixed_result[i][j])
+
+fixed_result = np.array(fixed_result)
+
+print("Fixed-point 16-bit result:\n")
 print(fixed_result)
 
 print("\n---------------------------------------------------------------------------------------\n")

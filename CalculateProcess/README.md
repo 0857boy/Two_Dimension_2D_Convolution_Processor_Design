@@ -17,5 +17,5 @@
 
 *此次專案要求計算36個output值做平均後計算SQNR，SQNR值需 > 30 dB 公式變更為：SQNR = 20 * log10(信號(float 的output)的平方和平均 / 量化(float 與 fixed-point output)誤差的平方和)平均*
 
-
-![alt text](image.png)
+## 範例圖示
+![convCMD](EX.png)

@@ -24,6 +24,8 @@ RAM_word8_bit8 ram_inst (
     .dout(dout)
 );
 
+reg [3:0] i, j;
+
 // Clock generation
 always #((CLK_PERIOD)/2) clk = ~clk;
 
@@ -41,24 +43,24 @@ initial begin
 
 
     reg signed [7:0] fixed_matrix [0:7];
-    for ( int i = 0; i <= 7; i = i + 1) begin
-        for ( int j = 0; j <= 7; j = j + 1) begin
+    for ( i = 0; i <= 7; i = i + 1) begin
+        for ( j = 0; j <= 7; j = j + 1) begin
             fixed_matrix[i][j] = (matrix[i][j] / 255.0) * (1 << 7); // 小數點向右移動7位，這裡的除法將會自動轉換為有號數運算
         end
     end
 
     // Write the 8x8 matrix
     wr = 0;
-    for (int i = 0; i < 8; i = i + 1) begin
+    for ( i = 0; i < 8; i = i + 1) begin
         address = i; // Assign the address
-        for (int j = 0; j < 8; j = j + 1) begin
+        for ( j = 0; j < 8; j = j + 1) begin
             din = fixed_matrix[i][j];
         end
     end
 
     // Read the 8x8 matrix
     wr = 1;
-    for (int i = 0; i < 8; i = i + 1) begin
+    for ( i = 0; i < 8; i = i + 1) begin
         address = i; // Assign the address
         fixed_matrix_dout[i] = dout;
     end

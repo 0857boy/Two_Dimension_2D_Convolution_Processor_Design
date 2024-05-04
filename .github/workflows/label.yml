@@ -6,15 +6,7 @@
 # https://github.com/actions/labeler
 
 name: Labeler
-on: 
-  push:
-    branches:
-      - main
-  pull_request:
-    types:
-      - opened
-      - synchronize
-      - reopened
+on: [pull_request_target]
 
 jobs:
   label:

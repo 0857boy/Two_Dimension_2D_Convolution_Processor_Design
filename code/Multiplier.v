@@ -13,6 +13,7 @@ reg [15:0] q;
 reg [4:0] cnt;
 reg start;
 
+
 always @(posedge clk) begin
     if (!in_st && !start) begin
         start <= 1;

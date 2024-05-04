@@ -4,7 +4,7 @@ b. 根據a.的floating-point運算內容，得出其fixed-point值的運算結�
             並計算其SQNR(由36個output值做平均後計算SQNR，SQNR值需 > 30 dB)。(10%)
 
 '''
-import transform as tf
+import Transform as tf
 import numpy as np
 
 # 8x8 matrix

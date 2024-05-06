@@ -3,8 +3,8 @@
 module RAM_word8_bit8(clk, wr, din, dout);
 
 input	clk, wr;
-input	[7:0]	din[7:0][7:0];
-output	[7:0]	dout[7:0][7:0];
+input	[7:0]	din[0:7][0:7];
+output	[7:0]	dout[0:7][0:7];
 
 reg	 [7:0]	ram_data[0:7][0:7];
 reg	 [7:0]	dout;

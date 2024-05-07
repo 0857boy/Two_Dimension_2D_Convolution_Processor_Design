@@ -2,15 +2,15 @@
 module ModuleConv (
     input clk, reset, in_st,
     input signed [7:0] din [0:7][0:7],
-    output signed reg [15:0] dout [0:6][0:6],
+    output signed reg [15:0] dout [0:5][0:5],
     output reg out_st
 );
 
-reg state;
+wire [7:0] memoryOut [0:7][0:7];
+reg inside_in_st;
 
-
-
-// if in_st is high, then the module should put data from din to memory
+Ram_word8_bit8 ram(clk, in_st, din, memoryOut);
+Conv conv(clk, reset, inside_in_st, memoryOut, dout, out_st);
 
 
 always @(posedge clk) begin
@@ -21,13 +21,10 @@ always @(posedge clk) begin
         state <= 0;
     end
 
-    else if (state == 0 && in_st == 1'b1) begin
-        // Input data storing
-        
+    else 
+        inside_in_st <= in_st;
 
 end
-
-
 
 
 

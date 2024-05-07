@@ -2,7 +2,7 @@
 module ModuleConv (
     input clk, reset, in_st,
     input signed [7:0] din [0:7][0:7],
-    output signed reg [6:0] dout [0:6],
+    output signed reg [15:0] dout [0:6][0:6],
     output reg out_st
 );
 

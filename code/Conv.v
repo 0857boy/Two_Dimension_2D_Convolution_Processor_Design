@@ -55,9 +55,6 @@ always @(posedge clk) begin
                 line <= 0;
                 out_st <= 1'b1;
             end
-            else begin
-                line <= line + 1;
-            end
         end
 
         else begin

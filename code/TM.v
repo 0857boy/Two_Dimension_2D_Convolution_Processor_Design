@@ -24,7 +24,6 @@ RAM_word8_bit8 ram_inst (
     .dout(dout)
 );
 
-reg [3:0] i, j;
 
 // Clock generation
 always #((CLK_PERIOD)/2) clk = ~clk;

@@ -21,8 +21,9 @@ always @(posedge clk) begin
         state <= 0;
     end
 
-    else 
+    else if (inside_in_st != in_st) begin
         inside_in_st <= in_st;
+    end
 
 end
 

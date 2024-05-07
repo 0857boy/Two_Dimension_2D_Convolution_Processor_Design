@@ -3,7 +3,7 @@
 module Conv(
     input clk, reset, in_st,
     input signed [7:0] din [0:7][0:7],
-    output signed reg [15:0] dout [0:6][0:6],
+    output signed reg [15:0] dout [0:5][0:5],
     output reg out_st
 );
 
@@ -12,7 +12,7 @@ reg [2:0] line, row;
 reg cycle;
 reg [15:0] signed conv_result [0:6][0:6];
 
-// 3x3 fixed-point kernel
+// 3x3 fixed-point kernel kernel 應該要改為由外部傳入
 reg [7:0] signed fixed_kernel [0:2][0:2] = {{8'd06250000, 8'd12500000, 8'd06250000}, 
                                             {8'd12500000, 8'd25000000, 8'd12500000}, 
                                             {8'd06250000, 8'd12500000, 8'd06250000}};

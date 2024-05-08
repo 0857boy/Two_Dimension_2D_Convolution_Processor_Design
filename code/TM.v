@@ -7,23 +7,18 @@ parameter CLK_PERIOD = 10;
 
 // Inputs
 reg clk;
-reg wr;
+reg reset;
+reg in_st;
 reg [2:0] address;
 reg signed [7:0] din; // 使用 signed 有號資料型別
 
 // Outputs
 wire signed [7:0] dout; // 使用 signed 有號資料型別
 reg signed [7:0] fixed_matrix_dout [0:7]; // 使用 signed 有號資料型別
+reg out_st;
 
-// Instantiate the RAM module
-RAM_word8_bit8 ram_inst (
-    .clk(clk),
-    .wr(wr),
-    .address(address),
-    .din(din),
-    .dout(dout)
-);
-
+// Module instantiation
+ModuleConv moduleConv(clk, reset, in_st, fixed_matrix, dout, out_st);
 
 // Clock generation
 always #((CLK_PERIOD)/2) clk = ~clk;

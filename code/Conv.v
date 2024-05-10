@@ -1,62 +1,74 @@
 `timescale 1ns/1ns
 
 module Conv(
-    input clk, reset, in_st,
-    input signed [7:0] din [0:7][0:7],
-    output signed reg [15:0] dout [0:5][0:5],
+    input clk, 
+	input in_st,
+    output dout [15:0],
     output reg out_st
 );
 
-reg start_conv;
+reg start_conv, load_data_status, save_data_status;
+reg [15:0] signed conv_result [0:35];
+reg [7:0] signed ram_dout_reg [0:7];
+reg cycle ;
 reg [2:0] line, row;
-reg cycle;
-reg [15:0] signed conv_result [0:6][0:6];
+reg [15:0] signed temp[0:8];
+reg [5:0] output_counter ;
 
-// 3x3 fixed-point kernel kernel 應該要改為由外部傳入
-reg [7:0] signed fixed_kernel [0:2][0:2] = {{8'd06250000, 8'd12500000, 8'd06250000}, 
-                                            {8'd12500000, 8'd25000000, 8'd12500000}, 
-                                            {8'd06250000, 8'd12500000, 8'd06250000}};
+
+// 3x3 fixed-point kernel
+reg [7:0] signed fixed_kernel [0:8] = {8'd06250000, 8'd12500000, 8'd06250000, 
+                                       8'd12500000, 8'd25000000, 8'd12500000, 
+                                       8'd06250000, 8'd12500000, 8'd06250000};
+									   
+///////////////RAM INPUT////////////////
+reg wr;
+reg [7:0] signed ram_din;
+reg [7:0] signed ram_dout;
+reg [5:0] address;
+reg [5:0] load_ram_counter; 
+RAM RAM_temp(
+    .clk(clk),
+    .wr(wr), 
+    .address(address), 
+    .din(ram_din), 
+    .dout(ram_dout) 
+);
+///////////////////////////////////////
 
 always @(posedge clk) begin
-    if (reset) begin
-        in_st <= x;
-        out_st <= x;
-        dout <= x;
-        conv_result <= x;
-        start_conv <= 1'b0;
-    end
-
-    else if (start_conv == 1'b1) begin
-        // Covolution processing
-    end
-
-    else if (out_st == 1'b1) begin
-        // Output data storing
-        dout <= conv_result;
-        out_st <= 1'b0;
-    end
-
-    else if (in_st == 1'b1) begin
-        // Input data storing
-        start_conv <= 1'b1;
-        line <= 0;
+    if ( in_st ) begin // reset
+        start_conv <= 0 ;
+		cycle <= 0 ;
+        line <= 0 ;
         row <= 0;
-        cycle <= 0;
-    end
-end
+		out_st <= 0 ;
+		load_ram_counter <= 6'b000000;
+		address <= 6'b000000; 
+		load_data_status <= 1 ;
+	end
+	else if( load_data_status ) begin // take data from RAM
+	    wr = 1;
+        address <= load_ram_counter; 
+        ram_dout_reg[load_ram_counter] <= ram_dout; 
+        load_ram_counter <= load_ram_counter + 1; 
+        if (load_ram_counter == 64) begin
+            start_conv <= 1;
+			load_data_status <= 0 ;
+			address <= 6'b000000; 
+			load_ram_counter <= 6'b000000; 
+        end
+	end
 
-reg [16:0] signed temp[0:2][0:2];
-
-always @(posedge clk) begin
-    if (start_conv == 1'b0) begin
+    if (start_conv == 1'b1) begin
         if (row == 5) begin
             row <= 0;
             if (line == 6) begin
                 line <= 0;
                 out_st <= 1'b1;
+				start_conv <= 0;
             end
         end
-
         else begin
             if (cycle == 1) begin
                 row <= row + 1;
@@ -66,35 +78,40 @@ always @(posedge clk) begin
                 cycle <= 0;
             end
         end
-
-
-        if (line < 6) begin
-            // Convolution processing
-            conv_result[line][row] <= 0;
-            if (circle == 0) begin // multiply
-                temp[0][0] <= din[line][row] * fixed_kernel[0][0];
-                temp[0][1] <= din[line][row+1] * fixed_kernel[0][1];
-                temp[0][2] <= din[line][row+2] * fixed_kernel[0][2];
-                temp[1][0] <= din[line+1][row] * fixed_kernel[1][0];
-                temp[1][1] <= din[line+1][row+1] * fixed_kernel[1][1];
-                temp[1][2] <= din[line+1][row+2] * fixed_kernel[1][2];
-                temp[2][0] <= din[line+2][row] * fixed_kernel[2][0];
-                temp[2][1] <= din[line+2][row+1] * fixed_kernel[2][1];
-                temp[2][2] <= din[line+2][row+2] * fixed_kernel[2][2];
-            end
-
-            else if (circle == 1) begin // add
-                conv_result[line][row] <= temp[0][0] + temp[0][1] + temp[0][2] + temp[1][0] + temp[1][1] + temp[1][2] + temp[2][0] + temp[2][1] + temp[2][2];
-            end
+		
+        if (cycle == 0) begin 
+            temp[0] <= ram_dout_reg[line*8+row] * fixed_kernel[0];
+            temp[1] <= ram_dout_reg[line*8+row+1] * fixed_kernel[1];
+            temp[2] <= ram_dout_reg[line*8+row+2] * fixed_kernel[2];
+            temp[3] <= ram_dout_reg[(line+1)*8+row] * fixed_kernel[3];
+            temp[4] <= ram_dout_reg[(line+1)*8+row+1] * fixed_kernel[4];
+            temp[5] <= ram_dout_reg[(line+1)*8+row+2] * fixed_kernel[5];
+            temp[6] <= ram_dout_reg[(line+2)*8+row] * fixed_kernel[6];
+            temp[7] <= ram_dout_reg[(line+2)*8+row+1] * fixed_kernel[7];
+            temp[8] <= ram_dout_reg[(line+2)*8+row+2] * fixed_kernel[8];
+            cycle <= 1;
         end
-
         else begin
-            start_conv <= 1'b0;
-            out_st <= 1'b1;
+            conv_result[line*8+row] <= temp[0] + temp[1] + temp[2] + temp[3] + temp[4] + temp[5] + temp[6] + temp[7] + temp[8];
+            row <= row + 1;
+            cycle <= 0;
         end
+
+    end
+    else begin
+        out_st <= 0;
     end
 
-    
+    // 輸出结果
+    if (out_st) begin
+        dout <= conv_result[output_counter] ;
+        output_counter <= output_counter + 1; 
+        if (output_counter == 64) begin
+			output_counter <= 6'b000000; 
+			out_st <= 0;
+        end
+		else out_st <= 1;
+    end
 end
 
 endmodule

@@ -161,6 +161,13 @@ always @(posedge clk) begin
         end
     end
 	else begin
+        $display("Conv Result:");
+        $display("  %d  %d  %d  %d  %d  %d", conv_result[0], conv_result[1], conv_result[2], conv_result[3], conv_result[4], conv_result[5]);
+        $display("  %d  %d  %d  %d  %d  %d", conv_result[6], conv_result[7], conv_result[8], conv_result[9], conv_result[10], conv_result[11]);
+        $display("  %d  %d  %d  %d  %d  %d", conv_result[12], conv_result[13], conv_result[14], conv_result[15], conv_result[16], conv_result[17]);
+        $display("  %d  %d  %d  %d  %d  %d", conv_result[18], conv_result[19], conv_result[20], conv_result[21], conv_result[22], conv_result[23]);
+        $display("  %d  %d  %d  %d  %d  %d", conv_result[24], conv_result[25], conv_result[26], conv_result[27], conv_result[28], conv_result[29]);
+        $display("  %d  %d  %d  %d  %d  %d", conv_result[30], conv_result[31], conv_result[32], conv_result[33], conv_result[34], conv_result[35]);
 		$stop;
 	end
 end

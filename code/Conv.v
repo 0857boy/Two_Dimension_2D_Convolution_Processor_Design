@@ -3,28 +3,28 @@
 module Conv(
     input clk, 
 	input in_st,
-    output dout [15:0],
+    output reg [15:0] dout ,
     output reg out_st
 );
 
 reg start_conv, load_data_status, save_data_status;
-reg [15:0] signed conv_result [0:35];
-reg [7:0] signed ram_dout_reg [0:7];
+reg [15:0] conv_result [0:35];
+reg [7:0] ram_dout_reg [0:7];
 reg cycle ;
 reg [2:0] line, row;
-reg [15:0] signed temp[0:8];
+reg [15:0] temp[0:8];
 reg [5:0] output_counter ;
 
 
 // 3x3 fixed-point kernel
-reg [7:0] signed fixed_kernel [0:8] = {8'd06250000, 8'd12500000, 8'd06250000, 
+reg [7:0] fixed_kernel [0:8] = {8'd06250000, 8'd12500000, 8'd06250000, 
                                        8'd12500000, 8'd25000000, 8'd12500000, 
                                        8'd06250000, 8'd12500000, 8'd06250000};
 									   
 ///////////////RAM INPUT////////////////
 reg wr;
-reg [7:0] signed ram_din;
-reg [7:0] signed ram_dout;
+reg [7:0] ram_din;
+reg [7:0] ram_dout;
 reg [5:0] address;
 reg [5:0] load_ram_counter; 
 RAM RAM_temp(

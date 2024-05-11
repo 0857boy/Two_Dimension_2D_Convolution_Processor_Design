@@ -39,7 +39,7 @@ reg [5:0] write_ram_counter;
 reg [15:0] conv_result[0:35];
 reg [5:0] output_counter ;
 reg [7:0] fixed_matrix [0:63];
-reg [7:0] matrix [0:63]; // 宣告多維陣列
+reg [7:0] matrix [0:63];
 
 initial begin
     matrix[0]  = 8'b01000011; // 67

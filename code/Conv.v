@@ -7,7 +7,7 @@ module Conv(
     output reg out_st
 );
 
-reg start_conv, load_data_status, save_data_status;
+reg start_conv, load_data_status;
 reg [15:0] conv_result [0:35];
 reg [7:0] ram_dout_reg [0:7];
 reg cycle ;

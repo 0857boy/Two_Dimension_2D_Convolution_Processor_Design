@@ -17,14 +17,23 @@ reg [5:0] output_counter ;
 
 
 // 3x3 fixed-point kernel
-reg [7:0] fixed_kernel [0:8] = {8'd06250000, 8'd12500000, 8'd06250000, 
-                                       8'd12500000, 8'd25000000, 8'd12500000, 
-                                       8'd06250000, 8'd12500000, 8'd06250000};
+reg [7:0] fixed_kernel [0:8] ;
+initial begin
+    fixed_kernel[0] = 8'd06250000;
+    fixed_kernel[1] = 8'd12500000;
+    fixed_kernel[2] = 8'd06250000;
+    fixed_kernel[3] = 8'd12500000;
+    fixed_kernel[4] = 8'd25000000;
+    fixed_kernel[5] = 8'd12500000;
+    fixed_kernel[6] = 8'd06250000;
+    fixed_kernel[7] = 8'd12500000;
+    fixed_kernel[8] = 8'd06250000;
+end
 									   
 ///////////////RAM INPUT////////////////
 reg wr;
 reg [7:0] ram_din;
-reg [7:0] ram_dout;
+wire [7:0] ram_dout;
 reg [5:0] address;
 reg [5:0] load_ram_counter; 
 RAM RAM_temp(

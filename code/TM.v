@@ -10,8 +10,9 @@ always #((CLK_PERIOD)/2) clk = ~clk;
 
 
 //////////Conv////////////////
-reg [15:0] dout; 
-reg in_st, out_st;
+wire [15:0] dout; 
+reg in_st; 
+wire out_st;
 
 Conv moduleConv(
     .clk(clk), 
@@ -24,7 +25,7 @@ Conv moduleConv(
 ///////////////RAM INPUT////////////////
 reg wr;
 reg [7:0] ram_din;
-reg [7:0] ram_dout;
+wire [7:0] ram_dout;
 reg [5:0] address;
 RAM RAM_temp(
     .clk(clk),
@@ -38,17 +39,74 @@ reg [5:0] write_ram_counter;
 reg [15:0] conv_result[0:35];
 reg [5:0] output_counter ;
 reg [7:0] fixed_matrix [0:63];
-reg [7:0] matrix [0:63] = {8'sd67, 8'sd47, 8'sd50, 8'sd93, 8'sd0, 8'sd5, 8'sd91, 8'sd34, // 使用 signed 有號資料型別
-                                     8'sd84, 8'sd83, 8'sd73, 8'sd42, 8'sd17, 8'sd45, 8'sd72, 8'sd11, 
-                                     8'sd92, 8'sd35, 8'sd48, 8'sd35, 8'sd35, 8'sd50, 8'sd30, 8'sd89, 
-                                     8'sd53, 8'sd41, 8'sd92, 8'sd36, 8'sd64, 8'sd21, 8'sd15, 8'sd14, 
-                                     8'sd20, 8'sd55, 8'sd73, 8'sd12, 8'sd46, 8'sd84, 8'sd52, 8'sd64, 
-                                     8'sd67, 8'sd4, 8'sd38, 8'sd77, 8'sd1, 8'sd55, 8'sd97, 8'sd2, 
-                                     8'sd56, 8'sd40, 8'sd91, 8'sd65, 8'sd24, 8'sd61, 8'sd51, 8'sd32, 
-                                     8'sd96, 8'sd40, 8'sd59, 8'sd50, 8'sd38, 8'sd37, 8'sd5, 8'sd11};
+reg [7:0] matrix [0:63]; // 宣告多維陣列
 
-// Testbench stimulus
 initial begin
+    matrix[0]  = 8'b01000011; // 67
+    matrix[1]  = 8'b00101111; // 47
+    matrix[2]  = 8'b00110010; // 50
+    matrix[3]  = 8'b01011101; // 93
+    matrix[4]  = 8'b00000000; // 0
+    matrix[5]  = 8'b00000101; // 5
+    matrix[6]  = 8'b01011011; // 91
+    matrix[7]  = 8'b00100010; // 34
+    matrix[8]  = 8'b01010100; // 84
+    matrix[9]  = 8'b01010011; // 83
+    matrix[10] = 8'b01001001; // 73
+    matrix[11] = 8'b00101010; // 42
+    matrix[12] = 8'b00010001; // 17
+    matrix[13] = 8'b00101101; // 45
+    matrix[14] = 8'b01001000; // 72
+    matrix[15] = 8'b00001011; // 11
+    matrix[16] = 8'b01011100; // 92
+    matrix[17] = 8'b00100011; // 35
+    matrix[18] = 8'b00110000; // 48
+    matrix[19] = 8'b00100011; // 35
+    matrix[20] = 8'b00100011; // 35
+    matrix[21] = 8'b00110010; // 50
+    matrix[22] = 8'b00011110; // 30
+    matrix[23] = 8'b01011001; // 89
+    matrix[24] = 8'b00110101; // 53
+    matrix[25] = 8'b00101001; // 41
+    matrix[26] = 8'b01011100; // 92
+    matrix[27] = 8'b00100100; // 36
+    matrix[28] = 8'b01000000; // 64
+    matrix[29] = 8'b00010101; // 21
+    matrix[30] = 8'b00001111; // 15
+    matrix[31] = 8'b00001110; // 14
+    matrix[32] = 8'b00010100; // 20
+    matrix[33] = 8'b00110111; // 55
+    matrix[34] = 8'b01001001; // 73
+    matrix[35] = 8'b00001100; // 12
+    matrix[36] = 8'b00101110; // 46
+    matrix[37] = 8'b01010100; // 84
+    matrix[38] = 8'b00110100; // 52
+    matrix[39] = 8'b01000000; // 64
+    matrix[40] = 8'b01000011; // 67
+    matrix[41] = 8'b00000100; // 4
+    matrix[42] = 8'b00100110; // 38
+    matrix[43] = 8'b01001101; // 77
+    matrix[44] = 8'b00000001; // 1
+    matrix[45] = 8'b00110111; // 55
+    matrix[46] = 8'b01100001; // 97
+    matrix[47] = 8'b00000010; // 2
+    matrix[48] = 8'b00111000; // 56
+    matrix[49] = 8'b00101000; // 40
+    matrix[50] = 8'b01011011; // 91
+    matrix[51] = 8'b01000001; // 65
+    matrix[52] = 8'b00011000; // 24
+    matrix[53] = 8'b00111101; // 61
+    matrix[54] = 8'b00110011; // 51
+    matrix[55] = 8'b00100000; // 32
+    matrix[56] = 8'b01100000; // 96
+    matrix[57] = 8'b00101000; // 40
+    matrix[58] = 8'b00111011; // 59
+    matrix[59] = 8'b00110010; // 50
+    matrix[60] = 8'b00100110; // 38
+    matrix[61] = 8'b00100101; // 37
+    matrix[62] = 8'b00000101; // 5
+    matrix[63] = 8'b00001011; // 11
+
     // i = 0
     fixed_matrix[0] = (matrix[0] / 255.0) * (1 << 7);
     fixed_matrix[1] = (matrix[1] / 255.0) * (1 << 7);

@@ -191,6 +191,7 @@ initial begin
 	in_st = 0 ;
 	#clk
 	in_st = 1 ;
+    #(clk*100) $stop;
 end
 
 always @(posedge clk) begin

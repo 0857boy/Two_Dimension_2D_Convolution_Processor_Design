@@ -1,26 +1,13 @@
-`timescale 1ns/1ns
+`timescale 1ps/1ps
 
 module TB;
 
 ////////////Clock/////////////
 parameter CLK_PERIOD = 10; 
 reg clk;
-always #((CLK_PERIOD)/2) clk = ~clk;
+always #(CLK_PERIOD/2) clk = ~clk;
 /////////////////////////////
 
-
-//////////Conv////////////////
-wire [15:0] dout; 
-reg in_st; 
-wire out_st;
-
-Conv moduleConv(
-    .clk(clk), 
-	.in_st(in_st),
-    .dout(dout),
-    .out_st(out_st)
-);
-/////////////////////////////
 
 ///////////////RAM INPUT////////////////
 reg wr;
@@ -35,6 +22,23 @@ RAM RAM_temp(
     .dout(ram_dout) 
 );
 ///////////////////////////////////////
+
+
+//////////Conv////////////////
+wire [15:0] dout; 
+reg in_st; 
+wire out_st;
+
+Conv moduleConv(
+    .clk(clk), 
+	.in_st(in_st),
+    .din(ram_dout),
+    .dout(dout),
+    .out_st(out_st)
+);
+/////////////////////////////
+
+
 reg [5:0] write_ram_counter; 
 reg [15:0] conv_result[0:35];
 reg [5:0] output_counter ;
@@ -42,6 +46,8 @@ reg [7:0] fixed_matrix [0:63];
 reg [7:0] matrix [0:63];
 
 initial begin
+    clk = 0;
+    in_st = 1'bx; // reset
     matrix[0]  = 8'b01000011; // 67
     matrix[1]  = 8'b00101111; // 47
     matrix[2]  = 8'b00110010; // 50
@@ -186,43 +192,82 @@ initial begin
     fixed_matrix[61] = (matrix[61] / 255.0) * (1 << 7);
     fixed_matrix[62] = (matrix[62] / 255.0) * (1 << 7);
     fixed_matrix[63] = (matrix[63] / 255.0) * (1 << 7);
-	write_ram_counter = 0 ;
+	write_ram_counter <= 0 ;
+    output_counter <= 0 ;
+    wr <= 1;
 
-	in_st = 0 ;
-	#clk
-	in_st = 1 ;
-    #(clk*100) $stop;
+    #(CLK_PERIOD*66)
+
+	in_st <= 1 ;
+    address <= 6'b000000;
+
+
+
+    #(CLK_PERIOD) address <= 6'b000001;
+    #(CLK_PERIOD) address <= 6'b000010;
+    #(CLK_PERIOD) address <= 6'b000011;
+    #(CLK_PERIOD) address <= 6'b001000;
+    #(CLK_PERIOD) address <= 6'b001001;
+    #(CLK_PERIOD) address <= 6'b001010;
+    #(CLK_PERIOD) address <= 6'b001011;
+    #(CLK_PERIOD) address <= 6'b010000;
+    #(CLK_PERIOD) address <= 6'b010001;
+    #(CLK_PERIOD) address <= 6'b010010;
+    #(CLK_PERIOD) address <= 6'b010011;
+    #(CLK_PERIOD) address <= 6'b011000;
+    #(CLK_PERIOD) address <= 6'b011001;
+    #(CLK_PERIOD) address <= 6'b011010;
+    #(CLK_PERIOD) address <= 6'b011011;
+    #(CLK_PERIOD) address <= 6'b100000;
+    #(CLK_PERIOD) address <= 6'b100001;
+    #(CLK_PERIOD) address <= 6'b100010;
+    #(CLK_PERIOD) address <= 6'b100011;
+    #(CLK_PERIOD) address <= 6'b101000;
+    #(CLK_PERIOD) address <= 6'b101001;
+    #(CLK_PERIOD) address <= 6'b101010;
+    #(CLK_PERIOD) address <= 6'b101011;
+    #(CLK_PERIOD) address <= 6'b110000;
+    #(CLK_PERIOD) address <= 6'b110001;
+    #(CLK_PERIOD) address <= 6'b110010;
+    #(CLK_PERIOD) address <= 6'b110011;
+    #(CLK_PERIOD) address <= 6'b111000;
+    #(CLK_PERIOD) address <= 6'b111001;
+    #(CLK_PERIOD) address <= 6'b111010;
+    #(CLK_PERIOD) address <= 6'b111011;
+    #(CLK_PERIOD) address <= 6'b111100;
+    #(CLK_PERIOD) address <= 6'b111101;
+    #(CLK_PERIOD) address <= 6'b111110;
+    #(CLK_PERIOD) address <= 6'b111111;
+    
+    #(CLK_PERIOD*300) $display("finished");
+    $stop;
 end
 
 always @(posedge clk) begin
-    if ( in_st ) begin
-	    wr = 0;
-        address <= write_ram_counter; 
-        ram_din <= fixed_matrix[write_ram_counter]; 
+    if ( wr == 1'b1 ) begin
+        address = write_ram_counter; 
+        ram_din = fixed_matrix[write_ram_counter]; 
         write_ram_counter <= write_ram_counter + 1; 
-        if (write_ram_counter == 64) begin
+        if (write_ram_counter == 63) begin // 8x8 matrix
 			address <= 6'b000000; 
-			write_ram_counter <= 6'b000000;  
-			in_st <= 0 ;
+			write_ram_counter <= 6'b000000;
+			wr <= 1'b0;
         end
     end	
-	else if ( out_st == 1 ) begin
-        conv_result[output_counter] <= dout ;
-        output_counter <= output_counter + 1; 
-        if (output_counter == 64) begin
-			output_counter <= 6'b000000; 
+	else if ( out_st == 1'b1 ) begin
+        conv_result[output_counter] = dout ;
+        output_counter = output_counter + 1; 
+        if (output_counter == 35) begin // 6x6 matrix
+            output_counter <= 6'b000000;
+            $display("Conv Result:");
+            $display("  %b  %b  %b  %b  %b  %b", conv_result[0], conv_result[1], conv_result[2], conv_result[3], conv_result[4], conv_result[5]);
+            $display("  %b  %b  %b  %b  %b  %b", conv_result[6], conv_result[7], conv_result[8], conv_result[9], conv_result[10], conv_result[11]);
+            $display("  %b  %b  %b  %b  %b  %b", conv_result[12], conv_result[13], conv_result[14], conv_result[15], conv_result[16], conv_result[17]);
+            $display("  %b  %b  %b  %b  %b  %b", conv_result[18], conv_result[19], conv_result[20], conv_result[21], conv_result[22], conv_result[23]);
+            $display("  %b  %b  %b  %b  %b  %b", conv_result[24], conv_result[25], conv_result[26], conv_result[27], conv_result[28], conv_result[29]);
+            $display("  %b  %b  %b  %b  %b  %b", conv_result[30], conv_result[31], conv_result[32], conv_result[33], conv_result[34], conv_result[35]);
         end
     end
-	else begin
-        $display("Conv Result:");
-        $display("  %d  %d  %d  %d  %d  %d", conv_result[0], conv_result[1], conv_result[2], conv_result[3], conv_result[4], conv_result[5]);
-        $display("  %d  %d  %d  %d  %d  %d", conv_result[6], conv_result[7], conv_result[8], conv_result[9], conv_result[10], conv_result[11]);
-        $display("  %d  %d  %d  %d  %d  %d", conv_result[12], conv_result[13], conv_result[14], conv_result[15], conv_result[16], conv_result[17]);
-        $display("  %d  %d  %d  %d  %d  %d", conv_result[18], conv_result[19], conv_result[20], conv_result[21], conv_result[22], conv_result[23]);
-        $display("  %d  %d  %d  %d  %d  %d", conv_result[24], conv_result[25], conv_result[26], conv_result[27], conv_result[28], conv_result[29]);
-        $display("  %d  %d  %d  %d  %d  %d", conv_result[30], conv_result[31], conv_result[32], conv_result[33], conv_result[34], conv_result[35]);
-		$stop;
-	end
 end
 
 endmodule

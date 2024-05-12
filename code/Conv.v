@@ -1,15 +1,16 @@
-`timescale 1ns/1ns
+`timescale 1ps/1ps
 
 module Conv(
     input clk, 
 	input in_st,
+    input [7:0] din,
     output reg [15:0] dout ,
     output reg out_st
 );
 
 reg start_conv, load_data_status;
 reg [15:0] conv_result [0:35];
-reg [7:0] ram_dout_reg [0:7];
+reg [7:0] input_feature [0:63];
 reg cycle ;
 reg [2:0] line, row;
 reg [15:0] temp[0:8];
@@ -30,52 +31,39 @@ initial begin
     fixed_kernel[8] = 8'b00001000; // 0.0625 -> 00001000
 end
 									   
-///////////////RAM INPUT////////////////
-reg wr;
-reg [7:0] ram_din;
-wire [7:0] ram_dout;
-reg [5:0] address;
-reg [5:0] load_ram_counter; 
-RAM RAM_temp(
-    .clk(clk),
-    .wr(wr), 
-    .address(address), 
-    .din(ram_din), 
-    .dout(ram_dout) 
-);
-///////////////////////////////////////
 
 always @(posedge clk) begin
-    if ( in_st ) begin // reset
-        start_conv <= 0 ;
-		cycle <= 0 ;
-        line <= 0 ;
-        row <= 0;
-		out_st <= 0 ;
-		load_ram_counter <= 6'b000000;
-		address <= 6'b000000; 
-		load_data_status <= 1 ;
+    if ( in_st == 1'bx ) begin // reset
+        start_conv = 0 ;
+		cycle = 0 ;
+        line = 0 ;
+        row = 0;
+		out_st = 0 ;
+		load_data_status = 0 ;
 	end
-	else if( load_data_status ) begin // take data from RAM
-	    wr = 1;
-        address <= load_ram_counter; 
-        ram_dout_reg[load_ram_counter] <= ram_dout; 
-        load_ram_counter <= load_ram_counter + 1; 
-        if (load_ram_counter == 64) begin
+	else if( load_data_status == 1'b1 ) begin // take data from RAM
+        input_feature[output_counter] <= din;
+        output_counter <= output_counter + 1;
+        if (output_counter == 64) begin
+            output_counter <= 6'b000000; 
+            load_data_status <= 0;
             start_conv <= 1;
-			load_data_status <= 0 ;
-			address <= 6'b000000; 
-			load_ram_counter <= 6'b000000; 
         end
 	end
 
+
+    
+end
+
+// Convolution operation 8x8 input feature map convolved with 3x3 kernel
+always @ (posedge clk) begin
     if (start_conv == 1'b1) begin
         if (row == 5) begin
             row <= 0;
             if (line == 6) begin
                 line <= 0;
+				start_conv <= 1'b0;
                 out_st <= 1'b1;
-				start_conv <= 0;
             end
         end
         else begin
@@ -89,15 +77,15 @@ always @(posedge clk) begin
         end
 		
         if (cycle == 0) begin 
-            temp[0] <= ram_dout_reg[line*8+row] * fixed_kernel[0];
-            temp[1] <= ram_dout_reg[line*8+row+1] * fixed_kernel[1];
-            temp[2] <= ram_dout_reg[line*8+row+2] * fixed_kernel[2];
-            temp[3] <= ram_dout_reg[(line+1)*8+row] * fixed_kernel[3];
-            temp[4] <= ram_dout_reg[(line+1)*8+row+1] * fixed_kernel[4];
-            temp[5] <= ram_dout_reg[(line+1)*8+row+2] * fixed_kernel[5];
-            temp[6] <= ram_dout_reg[(line+2)*8+row] * fixed_kernel[6];
-            temp[7] <= ram_dout_reg[(line+2)*8+row+1] * fixed_kernel[7];
-            temp[8] <= ram_dout_reg[(line+2)*8+row+2] * fixed_kernel[8];
+            temp[0] <= input_feature[line*8+row] * fixed_kernel[0];
+            temp[1] <= input_feature[line*8+row+1] * fixed_kernel[1];
+            temp[2] <= input_feature[line*8+row+2] * fixed_kernel[2];
+            temp[3] <= input_feature[(line+1)*8+row] * fixed_kernel[3];
+            temp[4] <= input_feature[(line+1)*8+row+1] * fixed_kernel[4];
+            temp[5] <= input_feature[(line+1)*8+row+2] * fixed_kernel[5];
+            temp[6] <= input_feature[(line+2)*8+row] * fixed_kernel[6];
+            temp[7] <= input_feature[(line+2)*8+row+1] * fixed_kernel[7];
+            temp[8] <= input_feature[(line+2)*8+row+2] * fixed_kernel[8];
             cycle <= 1;
         end
         else begin
@@ -107,19 +95,17 @@ always @(posedge clk) begin
         end
 
     end
-    else begin
-        out_st <= 0;
-    end
+end
 
-    // 輸出结果
-    if (out_st) begin
+// Output the result 6x6 matrix
+always @(posedge clk) begin
+    if ( out_st == 1'b1 ) begin
         dout <= conv_result[output_counter] ;
         output_counter <= output_counter + 1; 
-        if (output_counter == 64) begin
-			output_counter <= 6'b000000; 
-			out_st <= 0;
+        if (output_counter == 36) begin
+            output_counter <= 6'b000000; 
+            out_st <= 0;
         end
-		else out_st <= 1;
     end
 end
 

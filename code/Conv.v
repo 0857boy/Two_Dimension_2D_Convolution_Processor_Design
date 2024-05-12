@@ -19,15 +19,15 @@ reg [5:0] output_counter ;
 // 3x3 fixed-point kernel
 reg [7:0] fixed_kernel [0:8] ;
 initial begin
-    fixed_kernel[0] = 8'd06250000;
-    fixed_kernel[1] = 8'd12500000;
-    fixed_kernel[2] = 8'd06250000;
-    fixed_kernel[3] = 8'd12500000;
-    fixed_kernel[4] = 8'd25000000;
-    fixed_kernel[5] = 8'd12500000;
-    fixed_kernel[6] = 8'd06250000;
-    fixed_kernel[7] = 8'd12500000;
-    fixed_kernel[8] = 8'd06250000;
+    fixed_kernel[0] = 8'b06250000;
+    fixed_kernel[1] = 8'b12500000;
+    fixed_kernel[2] = 8'b06250000;
+    fixed_kernel[3] = 8'b12500000;
+    fixed_kernel[4] = 8'b25000000;
+    fixed_kernel[5] = 8'b12500000;
+    fixed_kernel[6] = 8'b06250000;
+    fixed_kernel[7] = 8'b12500000;
+    fixed_kernel[8] = 8'b06250000;
 end
 									   
 ///////////////RAM INPUT////////////////

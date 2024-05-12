@@ -30,27 +30,35 @@ initial begin
     fixed_kernel[7] = 8'b00010000; // 0.125  -> 00010000
     fixed_kernel[8] = 8'b00001000; // 0.0625 -> 00001000
 end
-									   
+
+initial begin
+    start_conv <= 1'b0;
+    load_data_status <= 1'b0;
+    cycle <= 1'b0;
+    line <= 3'b000;
+    row <= 3'b000;
+    output_counter <= 6'b000000;
+    out_st <= 1'b0;
+end								   
 
 always @(posedge clk) begin
-    if ( in_st == 1'bx ) begin // reset
-        start_conv = 0 ;
-		cycle = 0 ;
-        line = 0 ;
-        row = 0;
-		out_st = 0 ;
-		load_data_status = 0 ;
-	end
-	else if( load_data_status == 1'b1 ) begin // take data from RAM
-        input_feature[output_counter] <= din;
-        output_counter <= output_counter + 1;
-        if (output_counter == 64) begin
+    
+	if( load_data_status == 1'b1 && start_conv == 1'b0 ) begin // chek if previous data is Convolved
+        input_feature[output_counter] = din;
+        
+        if (output_counter == 63) begin
             output_counter <= 6'b000000; 
-            load_data_status <= 0;
-            start_conv <= 1;
+            load_data_status <= 1'b0;
+            start_conv <= 1'b1;
+        end
+        else begin
+            output_counter <= output_counter + 1;
         end
 	end
 
+    else if ( in_st == 1'b1 ) begin // start loading data
+        load_data_status <= 1'b1;
+    end
 
     
 end
@@ -60,10 +68,13 @@ always @ (posedge clk) begin
     if (start_conv == 1'b1) begin
         if (row == 5) begin
             row <= 0;
-            if (line == 6) begin
+            if (line == 5) begin
                 line <= 0;
 				start_conv <= 1'b0;
                 out_st <= 1'b1;
+            end
+            else begin
+                line <= line + 1;
             end
         end
         else begin

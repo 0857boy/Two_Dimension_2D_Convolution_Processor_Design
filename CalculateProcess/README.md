@@ -13,6 +13,8 @@
   ![Kernel](./images/Kernel.png)
 - Input Feature Map:  
   ![Input Feature Map](./images/Input.png)
+- Output Feature Map:
+  ![Output](./images/Output.png)  
 ## SQNR定義
 1. SQNR是信號與量化誤差之比，是一個信號的品質指標，信號越大，量化誤差越小，SQNR越大，信號品質越好
 2. SQNR的計算公式為：SQNR = 20 * log10(信號的平方和 / 量化誤差的平方和)  

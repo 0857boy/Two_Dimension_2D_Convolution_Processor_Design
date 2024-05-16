@@ -16,7 +16,7 @@ always @(posedge clk) begin
     if(~wr) begin //read data
 	    dout <= ram_data[address];
     end
-    else begin 
+    else begin
 	    dout <= 8'd0;
         ram_data[address] <= din;
     end

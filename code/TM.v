@@ -38,10 +38,12 @@ Conv moduleConv(
 /////////////////////////////
 
 
-reg [5:0] write_ram_counter; 
+reg [6:0] write_ram_counter; 
 reg [15:0] conv_result[0:35];
 reg [5:0] output_counter ;
 reg [7:0] fixed_matrix [0:63];
+
+reg output_data_status;
 
 initial begin
     clk = 0;
@@ -124,10 +126,11 @@ initial begin
 
     #(CLK_PERIOD*66)
 
-	in_st <= 1 ;
+	#(CLK_PERIOD) in_st <= 1 ;
+    address <= 6'b000000;
 
-    #(CLK_PERIOD) address <= 6'b000000;
     #(CLK_PERIOD) address <= 6'b000001;
+    in_st <= 1'b0;
     #(CLK_PERIOD) address <= 6'b000010;
     #(CLK_PERIOD) address <= 6'b000011;
     #(CLK_PERIOD) address <= 6'b000100;
@@ -191,28 +194,30 @@ initial begin
     #(CLK_PERIOD) address <= 6'b111110;
     #(CLK_PERIOD) address <= 6'b111111;
 	
-	in_st <= 0 ;
-
     
+
     #(CLK_PERIOD*300) $display("finished");
     $stop;
 end
 
 always @(posedge clk) begin
     if ( wr == 1'b1 ) begin
-        address = write_ram_counter; 
-        ram_din = fixed_matrix[write_ram_counter]; 
-        write_ram_counter <= write_ram_counter + 1; 
-        if (write_ram_counter == 63) begin // 8x8 matrix
+        address <= write_ram_counter; 
+        ram_din <= fixed_matrix[write_ram_counter]; 
+        
+        write_ram_counter <= write_ram_counter + 1;
+
+        if (write_ram_counter == 64) begin // 8x8 matrix
 			address <= 6'b000000; 
 			write_ram_counter <= 6'b000000;
 			wr <= 1'b0;
         end
     end	
-	else if ( out_st == 1'b1 ) begin
-        conv_result[output_counter] = dout ;
+
+    else if ( output_data_status == 1'b1 ) begin
+        conv_result[output_counter] <= dout ;
         output_counter <= output_counter + 1; 
-        if (output_counter == 35) begin // 6x6 matrix
+        if (output_counter == 36) begin // 6x6 matrix
             output_counter <= 6'b000000;
             $display("Conv Result:");
             $display("  %b  %b  %b  %b  %b  %b", conv_result[0], conv_result[1], conv_result[2], conv_result[3], conv_result[4], conv_result[5]);
@@ -221,7 +226,12 @@ always @(posedge clk) begin
             $display("  %b  %b  %b  %b  %b  %b", conv_result[18], conv_result[19], conv_result[20], conv_result[21], conv_result[22], conv_result[23]);
             $display("  %b  %b  %b  %b  %b  %b", conv_result[24], conv_result[25], conv_result[26], conv_result[27], conv_result[28], conv_result[29]);
             $display("  %b  %b  %b  %b  %b  %b", conv_result[30], conv_result[31], conv_result[32], conv_result[33], conv_result[34], conv_result[35]);
+            output_data_status = 1'b0;
         end
+    end
+
+	else if ( out_st == 1'b1 ) begin
+        output_data_status = 1'b1;
     end
 end
 

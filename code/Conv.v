@@ -133,7 +133,7 @@ end
 // Output the result 6x6 matrix
 always @(posedge clk) begin
     if ( output_data_status == 1'b1 ) begin
-        dout = conv_result[output_counter] ;
+        dout = conv_result[output_counter][19:4];
         output_counter <= output_counter + 1;
         out_st <= 1'b0;
         if (output_counter == 36) begin // 6x6 matrix

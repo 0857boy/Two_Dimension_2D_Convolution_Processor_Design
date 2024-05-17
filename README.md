@@ -37,3 +37,15 @@ Final Project Grading (40 %)
     3. 將你的設計進一步合成出電路做模擬或測試(FPGA Quartus/Vivado Tool或其他)。
     4. 提出你自己對設計優化的想法(找老師check)。
 
+
+## 進階
+選擇第5點，在convolution的運算後，再加上一個maxpooling的運算，將convolution的結果進行maxpooling。
+```
+MaxPool: 2x2 (將整個map 切成4個小區塊，每個小區塊取最大值)
+目的: 降低圖像的維度，並保留重要的特徵
+convolution後的圖像大小: 6x6 (input: 8x8, kernel: 3x3)
+maxpooling後的圖像大小: 2x2 (input: 6x6, 每9個pixel取一個最大值)
+```
+
+## 成果展示
+![demo](./images/demo.png)

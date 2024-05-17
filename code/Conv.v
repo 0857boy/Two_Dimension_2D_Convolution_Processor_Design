@@ -42,19 +42,6 @@ initial begin
 end								   
 ////////////////////////////////////////////////////////////////////
 
-////////////////////////////////initial/////////////////////////////
-initial begin
-    start_conv <= 1'b0;
-    load_data_status <= 1'b0;
-    data_counter <= 6'b000000;
-    line <= 3'b000;
-    row <= 3'b000;
-    cycle <= 1'b0;
-    out_st <= 1'b0;
-    output_counter <= 6'b000000;
-    output_data_status <= 1'b0;
-end
-////////////////////////////////////////////////////////////////////
 
 always @(posedge clk) begin
     
@@ -82,6 +69,11 @@ always @(posedge clk) begin
 	end
     else if ( in_st == 1'b1 ) begin // start loading data
         load_data_status <= 1'b1;
+        start_conv <= 1'b0;
+        data_counter <= 6'b000000;
+        line <= 3'b000;
+        row <= 3'b000;
+        cycle <= 1'b0;
     end
 
     
@@ -104,6 +96,7 @@ always @ (posedge clk) begin
                     start_conv <= 1'b0;
                     out_st <= 1'b1;
                     output_data_status <= 1'b1;
+                    output_counter <= 6'b000000;
                 end
             end
             cycle <= 0;

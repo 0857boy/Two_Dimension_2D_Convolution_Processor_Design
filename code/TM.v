@@ -23,7 +23,7 @@ RAM RAM_temp(
 ///////////////////////////////////////
 
 
-//////////Conv////////////////
+///////////////Conv////////////////
 wire [15:0] dout; 
 reg in_st; 
 wire out_st;
@@ -36,6 +36,25 @@ Conv moduleConv(
     .out_st(out_st)
 );
 /////////////////////////////
+
+
+///////////////MaxPool////////////////
+wire [15:0] maxpool_dout;
+reg[15:0] maxpool_din1, maxpool_din2, maxpool_din3, maxpool_din4, maxpool_din5, maxpool_din6, maxpool_din7, maxpool_din8, maxpool_din9;
+reg[15:0] maxpool_output[3:0]; // 2x2 matrix
+MaxPool moduleMaxPool(
+    .din1(maxpool_din1),
+    .din2(maxpool_din2),
+    .din3(maxpool_din3),
+    .din4(maxpool_din4),
+    .din5(maxpool_din5),
+    .din6(maxpool_din6),
+    .din7(maxpool_din7),
+    .din8(maxpool_din8),
+    .din9(maxpool_din9),
+    .dout(maxpool_dout)
+);
+///////////////////////////////////////
 
 
 reg [6:0] write_ram_counter; 
@@ -193,10 +212,66 @@ initial begin
     #(CLK_PERIOD) address <= 6'b111101;
     #(CLK_PERIOD) address <= 6'b111110;
     #(CLK_PERIOD) address <= 6'b111111;
-	
     
 
-    #(CLK_PERIOD*300) $display("finished");
+    #(CLK_PERIOD*200) $display("Conv is done");
+
+    maxpool_din1 <= conv_result[0];
+    maxpool_din2 <= conv_result[1];
+    maxpool_din3 <= conv_result[2];
+    maxpool_din4 <= conv_result[6];
+    maxpool_din5 <= conv_result[7];
+    maxpool_din6 <= conv_result[8];
+    maxpool_din7 <= conv_result[12];
+    maxpool_din8 <= conv_result[13];
+    maxpool_din9 <= conv_result[14];
+    
+
+    #(CLK_PERIOD) maxpool_output[0] <= maxpool_dout;
+
+    maxpool_din1 <= conv_result[3];
+    maxpool_din2 <= conv_result[4];
+    maxpool_din3 <= conv_result[5];
+    maxpool_din4 <= conv_result[9];
+    maxpool_din5 <= conv_result[10];
+    maxpool_din6 <= conv_result[11];
+    maxpool_din7 <= conv_result[15];
+    maxpool_din8 <= conv_result[16];
+    maxpool_din9 <= conv_result[17];
+
+    #(CLK_PERIOD) maxpool_output[1] <= maxpool_dout;
+
+    maxpool_din1 <= conv_result[18];
+    maxpool_din2 <= conv_result[19];
+    maxpool_din3 <= conv_result[20];
+    maxpool_din4 <= conv_result[24];
+    maxpool_din5 <= conv_result[25];
+    maxpool_din6 <= conv_result[26];
+    maxpool_din7 <= conv_result[30];
+    maxpool_din8 <= conv_result[31];
+    maxpool_din9 <= conv_result[32];
+
+    #(CLK_PERIOD) maxpool_output[2] <= maxpool_dout;
+
+    maxpool_din1 <= conv_result[21];
+    maxpool_din2 <= conv_result[22];
+    maxpool_din3 <= conv_result[23];
+    maxpool_din4 <= conv_result[27];
+    maxpool_din5 <= conv_result[28];
+    maxpool_din6 <= conv_result[29];
+    maxpool_din7 <= conv_result[33];
+    maxpool_din8 <= conv_result[34];
+    maxpool_din9 <= conv_result[35];
+
+    #(CLK_PERIOD) maxpool_output[3] <= maxpool_dout;
+
+
+    #(CLK_PERIOD)
+    $display("MaxPool Result:");
+    $display("  %b  %b", maxpool_output[0], maxpool_output[1]);
+    $display("  %b  %b", maxpool_output[2], maxpool_output[3]);
+
+    #(CLK_PERIOD) $display("MaxPool is done");
     $stop;
 end
 

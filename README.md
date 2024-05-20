@@ -49,3 +49,7 @@ maxpooling後的圖像大小: 2x2 (input: 6x6, 每9個pixel取一個最大值)
 
 ## 成果展示
 ![demo](./images/demo.png)
+
+## 可改善的地方
+1. 2-cycle 應該要分成兩個乘法，而不是一個乘法一個加法
+2. 硬體資源花費過多，可以參考sytolic array或是MAC array的架構
